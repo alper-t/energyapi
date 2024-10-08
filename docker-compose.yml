@@ -1,6 +1,7 @@
 version: '3'
 services:
   energyapi:
+    platform: "linux/amd64"
     networks:
       - web
     labels:
@@ -13,11 +14,13 @@ services:
 
   streamlit:
     build: frontend
+    platform: "linux/amd64"
     networks:
       - web 
     labels:
       - "traefik.http.routers.mongodb.rule=Host(`dashboard.docker.localhost`)"
   mongodb:
+    platform: "linux/amd64"
     image: mongo:latest
     networks:
       - web
@@ -28,7 +31,9 @@ services:
       - ./mongo-init:/docker-entrypoint-initdb.d:ro  # Mount the init script
     environment:
       MONGO_INITDB_DATABASE: mydatabase  # Set the initial database name
+
   adminbackend:
+    platform: "linux/amd64"
     build: adminpanel
     networks:
       - web
@@ -42,7 +47,9 @@ services:
       - MSSQLHOST=db:1433 
     depends_on:
       - "db"
+  
   db:
+    platform: "linux/amd64"
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       - MSSQL_SA_PASSWORD=EnergyAppPassword1337!  # Strong password required by MSSQL
@@ -53,7 +60,9 @@ services:
       - web  
     labels:
       - "traefik.enable=false"
+  
   reverse-proxy:
+    platform: "linux/amd64"
     # The official v2 Traefik docker image
     image: traefik:v2.11
     ports:
@@ -80,4 +89,5 @@ volumes:
 
 networks:
   web:
+    name: web
     external: true
